@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # allow manual trigger
+  workflow_dispatch:
 
 jobs:
   migrate:
@@ -17,12 +17,12 @@ jobs:
       - name: Set up Flyway CLI
         uses: red-gate/setup-flyway@v1
         with:
-          version: '11.15.0'
+          version: '11.15.0'  # pinned to 11.15.0
 
       - name: Run Flyway Migrations
         run: flyway \
-              -url="${{ secrets.DB_URL }}" \
-              -user="${{ secrets.DB_USER }}" \
-              -password="${{ secrets.DB_PASSWORD }}" \
-              -locations=filesystem:./sql \
+              --url="${{ secrets.DB_URL }}" \
+              --user="${{ secrets.DB_USER }}" \
+              --password="${{ secrets.DB_PASSWORD }}" \
+              --locations=filesystem:./sql \
               migrate
