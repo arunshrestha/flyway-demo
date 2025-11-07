@@ -14,11 +14,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Setup Java (needed for Java-based Flyway)
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'   # Flyway CLI requires Java 17+
+
+      # Setup Flyway CLI (Java architecture)
       - name: Set up Flyway CLI
         uses: red-gate/setup-flyway@v1
         with:
-          version: '11.15.0'  # pinned to 11.15.0
+          version: '11.15.0'
+          architecture: 'java'
+          edition: 'community'
 
+      # Run migrations
       - name: Run Flyway Migrations
         run: flyway \
               --url="${{ secrets.DB_URL }}" \
