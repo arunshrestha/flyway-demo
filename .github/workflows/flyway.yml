@@ -11,17 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Java (needed for Java-based Flyway)
+      # Setup Java (required for Flyway Java CLI)
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'   # Flyway CLI requires Java 17+
+          java-version: '17'
 
-      # Setup Flyway CLI (Java architecture)
+      # Setup Flyway CLI (Java architecture, pinned version)
       - name: Set up Flyway CLI
         uses: red-gate/setup-flyway@v1
         with:
@@ -29,11 +29,10 @@ jobs:
           architecture: 'java'
           edition: 'community'
 
-      # Run migrations
+      # Run Flyway migrations using conf file
       - name: Run Flyway Migrations
-        run: flyway \
-              --url="${{ secrets.DB_URL }}" \
-              --user="${{ secrets.DB_USER }}" \
-              --password="${{ secrets.DB_PASSWORD }}" \
-              --locations=filesystem:./sql \
-              migrate
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: flyway -configFiles=flyway.conf migrate
